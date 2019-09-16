@@ -56,10 +56,10 @@ packages:
   flutter_webview_plugin:
     dependency: "direct main"
     description:
-      name: flutter_webview_plugin
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.3.8"
+      path: flutter_webview_plugin
+      relative: true
+    source: path
+    version: "0.3.7"
   matcher:
     dependency: transitive
     description:

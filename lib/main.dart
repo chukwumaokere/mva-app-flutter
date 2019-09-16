@@ -19,7 +19,7 @@ final Set<JavascriptChannel> jsChannels = [
         if(message.message == 'scan'){
           //MyApp.startBarcode();
           print(message.message);
-          sBarcode(MyApp);
+          sBarcode(MyApp());
         }
       }),
 ].toSet();

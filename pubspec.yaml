@@ -25,7 +25,12 @@ dependencies:
   cupertino_icons: ^0.1.2
   flutter_webview_plugin:
     path: './flutter_webview_plugin'
-  flutter_barcode_scanner: ^0.1.5+1
+  flutter_barcode_scanner: ^0.1.7
+  image_crop:
+  image_picker:
+  image_cropper: ^1.1.0
+
+  http:
   
 dev_dependencies:
   flutter_test:

@@ -85,8 +85,8 @@ class MyApp extends StatelessWidget {
     if (file == null) {
       //String base64Image = base64Encode(file.readAsBytesSync());
       //String fileName = file.path.split("/").last;
-	flutterWebViewPlugin.evalJavascript("document.getElementById('barcodenumberasset').value='0'");
-      flutterWebViewPlugin.evalJavascript("eMessageTwo()");
+	    flutterWebViewPlugin.evalJavascript("document.getElementById('barcodenumberasset').value='0'");
+      flutterWebViewPlugin.evalJavascript('eMessageTwo()');
 
     } else{
       final String phpEndPoint = 'http://devl06.borugroup.com/mvadev/phoneapi/scanImage.php';
@@ -99,25 +99,25 @@ class MyApp extends StatelessWidget {
         "name": fileName,
       }).then((res) {
 	
-        //flutterWebViewPlugin.evalJavascript("document.getElementById('barcodenumberasset').value= 6767");
         print(res.statusCode);
         String statusCode = res.body;
         final jsonResponse = json.decode(res.body);
-        //String message =statusCode.message;
-	/*
-	if (jsonResponse['message'] == '' || !jsonResponse['message'] || jsonResponse['message'] == ' '){
-		flutterWebViewPlugin.evalJavascript("document.getElementById('barcodenumberasset').value='1'");
-		flutterWebViewPlugin.evalJavascript("document.getElementById('barcodenumberasset').value=''");
-		flutterWebViewPlugin.evalJavascript("eMessage()");
-	}
-	*/
+
         flutterWebViewPlugin.evalJavascript("document.getElementById('barcodenumberasset').value="+jsonResponse['message']);
         flutterWebViewPlugin.evalJavascript("document.getElementById('barcodenumberasset').dispatchEvent(new KeyboardEvent('keyup'))");
+        String message = jsonResponse['message'];
+         
+        print("Message is : " + message);
+        if (message == "''"){
+          flutterWebViewPlugin.evalJavascript('console.log(eMessage())');
+          flutterWebViewPlugin.evalJavascript('eMessage()');
+          print("hello again");
+        }
 
       }).catchError((err) {
         //print(err);
-        flutterWebViewPlugin.evalJavascript("document.getElementById('barcodenumberasset').value= 11"+err);
-
+        flutterWebViewPlugin.evalJavascript("document.getElementById('barcodenumberasset').value= Error: "+err);
+        flutterWebViewPlugin.evalJavascript('alert("Failed to parse image, please try again or enter asset number")');
       });
     }
 

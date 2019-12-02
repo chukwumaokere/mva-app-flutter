@@ -40,7 +40,7 @@ final Set<JavascriptChannel> jsChannels = [
 
 sBarcode(someVal) async {
   String bCode = await FlutterBarcodeScanner.scanBarcode("#ff6666", "Cancel", true, ScanMode.DEFAULT);
-  print(bCode);
+  print("barcode result is" + bCode);
   someVal.enterBarcode(bCode);
   return;
 }
@@ -70,14 +70,16 @@ class MyApp extends StatelessWidget {
 
   final flutterWebViewPlugin = FlutterWebviewPlugin();
   enterBarcode(barc) {
-    flutterWebViewPlugin.evalJavascript("document.getElementById('barcodenumber').value=" + barc + ";");
+    String js = "document.getElementById('barcodenumber').value='$barc'";
+    flutterWebViewPlugin.evalJavascript(js);
 	flutterWebViewPlugin.evalJavascript("document.getElementById('barcodenumber').dispatchEvent(event)");
   }
   enterCamera(barc) {
     flutterWebViewPlugin.evalJavascript("document.getElementById('barcodenumberasset').value=" + barc);
   }
   enterBarcodeAsset(barc) {
-    flutterWebViewPlugin.evalJavascript("document.getElementById('barcodenumberasset').value=" + barc);
+    String js = "document.getElementById('barcodenumber').value='$barc'";
+    flutterWebViewPlugin.evalJavascript(js);
     flutterWebViewPlugin.evalJavascript("document.getElementById('barcodenumberasset').dispatchEvent(new KeyboardEvent('keyup'))");
   }
 

@@ -7,6 +7,7 @@ import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:image_crop/image_crop.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:image/image.dart' as SomeLib;
 
 //import 'crop_image.dart';
 import 'package:http/http.dart' as http;
@@ -87,7 +88,7 @@ class MyApp extends StatelessWidget {
     if (file == null) {
       //String base64Image = base64Encode(file.readAsBytesSync());
       //String fileName = file.path.split("/").last;
-	    flutterWebViewPlugin.evalJavascript("document.getElementById('barcodenumberasset').value='0'");
+	    flutterWebViewPlugin.evalJavascript("document.getElementById('barcodenumberasset').value=''");
       flutterWebViewPlugin.evalJavascript('eMessageTwo()');
 
     } else{
@@ -383,6 +384,7 @@ class _MyAppState extends State<MyApps> {
   File _file;
   File _sample;
   File _lastCropped;
+  var _img;
 
   @override
   void dispose() {
@@ -454,8 +456,8 @@ class _MyAppState extends State<MyApps> {
     final file = await ImagePicker.pickImage(source: ImageSource.camera);
     final sample = await ImageCrop.sampleImage(
       file: file,
-      preferredWidth: 4096,
-      preferredHeight: 1024,
+      preferredWidth: 1024,
+      preferredHeight: 4096,
     );
 
     _sample?.delete();
@@ -468,11 +470,18 @@ class _MyAppState extends State<MyApps> {
     this._sample = sample;
     this._file = file;
     final area = Rect.fromLTWH( 0.0, 0.0, 1.0, 1.0);
-    final img = await ImageCrop.cropImage(
+    var img = await ImageCrop.cropImage(
       file: this._file,
       area: area,
     );
-
+/*
+   if(Platform.isIOS){
+      SomeLib.Image img2 = SomeLib.decodeImage(File(img.path).readAsBytesSync());
+      SomeLib.Image rFile = SomeLib.copyRotate(img2, 90);
+      this._img = rFile;
+	img = this._img;
+    }
+*/
     File croppedFile = await ImageCropper.cropImage(
         sourcePath: img.path,
         aspectRatioPresets: [

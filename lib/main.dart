@@ -477,17 +477,18 @@ class _MyAppState extends State<MyApps> {
       file: this._file,
       area: area,
     );
-
+/*
    if(Platform.isIOS){
-	Directory tempDir = await getTemporaryDirectory();
+//	Directory tempDir = await getTemporaryDirectory();
+	Directory appDir = await getApplicationDocumentsDirectory();
 
       SomeLib.Image img2 = SomeLib.decodeImage(File(img.path).readAsBytesSync());
       SomeLib.Image rFile = SomeLib.copyRotate(img2, 90);
  //     this._img = rFile;
-	final File rotated = File("${tempDir.path}/rotatedImg.png")..writeAsBytesSync(SomeLib.encodePng(rFile));
+	final File rotated = File("${appDir.path}/rotatedImg.png")..writeAsBytesSync(SomeLib.encodePng(rFile));
 	img = rotated;
     }
-
+*/
     File croppedFile = await ImageCropper.cropImage(
         sourcePath: img.path,
         aspectRatioPresets: [

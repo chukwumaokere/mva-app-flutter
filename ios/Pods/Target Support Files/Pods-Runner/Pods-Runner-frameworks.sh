@@ -167,6 +167,7 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/flutter_webview_plugin/flutter_webview_plugin.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/image_crop/image_crop.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/image_picker/image_picker.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/path_provider/path_provider.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${PODS_ROOT}/../.symlinks/flutter/ios-release/Flutter.framework"
@@ -175,6 +176,7 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/flutter_webview_plugin/flutter_webview_plugin.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/image_crop/image_crop.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/image_picker/image_picker.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/path_provider/path_provider.framework"
 fi
 if [[ "$CONFIGURATION" == "Profile" ]]; then
   install_framework "${PODS_ROOT}/../.symlinks/flutter/ios-release/Flutter.framework"
@@ -183,6 +185,7 @@ if [[ "$CONFIGURATION" == "Profile" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/flutter_webview_plugin/flutter_webview_plugin.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/image_crop/image_crop.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/image_picker/image_picker.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/path_provider/path_provider.framework"
 fi
 if [ "${COCOAPODS_PARALLEL_CODE_SIGN}" == "true" ]; then
   wait

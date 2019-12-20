@@ -86,7 +86,7 @@ class MyApp extends StatelessWidget {
   enterBarcode(barc) {
     String js = "document.getElementById('barcodenumber').value='$barc'";
     flutterWebViewPlugin.evalJavascript(js);
-    flutterWebViewPlugin.evalJavascript("document.getElementById('barcodenumber').dispatchEvent(new KeyboardEvent('keyup'))");
+    flutterWebViewPlugin.evalJavascript("document.getElementById('barcodenumber').dispatchEvent(event)");
   }
   enterCamera(barc) {
     flutterWebViewPlugin.evalJavascript("document.getElementById('barcodenumberasset').value=" + barc);

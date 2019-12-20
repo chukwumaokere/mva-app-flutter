@@ -7,6 +7,8 @@ import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:image_crop/image_crop.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:image/image.dart' as SomeLib;
+import 'package:path_provider/path_provider.dart';
 
 //import 'crop_image.dart';
 import 'package:http/http.dart' as http;
@@ -14,9 +16,11 @@ const kAndroidUserAgent =
     'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Mobile Safari/537.36';
 
 //String selectedUrl = 'https://damp-coast-35782.herokuapp.com';
-String selectedUrl = 'https://devl06.borugroup.com/mvadev/mva-phoneapp/#!/';
+//String selectedUrl = 'https://devl06.borugroup.com/mvadev/mva-phoneapp/#!/';
+String selectedUrl = 'https://mva.borugroup.com/mva-phoneapp/#!/login';
 //String selectedUrl = 'https://devl06.borugroup.com/cokere/buttontest/';
 
+File storedfile;
 // ignore: prefer_collection_literals
 final Set<JavascriptChannel> jsChannels = [
   JavascriptChannel(
@@ -30,17 +34,21 @@ final Set<JavascriptChannel> jsChannels = [
           print(message.message);
           sAssetBarcode(MyApp());
         }
-        else if(message.message=='captureImage'){
+        else if(message.message=='captureImage') {
           print(message.message);
-          //runApp(MyApps());
           takeImage(MyApps());
-        }}),
+        }
+        else if(message.message=='imageInstruction'){
+          print(message.message);
+          cropnewimage(MyApps());
+        }
+      }),
 ].toSet();
 
 
 sBarcode(someVal) async {
   String bCode = await FlutterBarcodeScanner.scanBarcode("#ff6666", "Cancel", true, ScanMode.DEFAULT);
-  print("barcode result is" + bCode);
+  print(bCode);
   someVal.enterBarcode(bCode);
   return;
 }
@@ -52,9 +60,15 @@ sAssetBarcode(someVal) async {
 }
 takeImage(someVal) async {
   Future opImg = _MyAppState()._openImage();
-  opImg.then((image) => uploadImage(MyApp(),image) ).catchError((error) => debugPrint(error));
+  opImg.then((image) => cropimage(MyApp()) ).catchError((error) => debugPrint(error));
   //MyApps().createState();
-
+}
+cropimage(someVal) async{
+  someVal.openpopup();
+}
+cropnewimage(someVal) async{
+  Future opImg = _MyAppState()._cropImage();
+  opImg.then((image) => uploadImage(MyApp(),image) ).catchError((error) => debugPrint(error));
 }
 uploadImage(someVal,file) async{
   debugPrint('$file');
@@ -72,7 +86,7 @@ class MyApp extends StatelessWidget {
   enterBarcode(barc) {
     String js = "document.getElementById('barcodenumber').value='$barc'";
     flutterWebViewPlugin.evalJavascript(js);
-	flutterWebViewPlugin.evalJavascript("document.getElementById('barcodenumber').dispatchEvent(event)");
+    flutterWebViewPlugin.evalJavascript("document.getElementById('barcodenumber').dispatchEvent(new KeyboardEvent('keyup'))");
   }
   enterCamera(barc) {
     flutterWebViewPlugin.evalJavascript("document.getElementById('barcodenumberasset').value=" + barc);
@@ -82,16 +96,19 @@ class MyApp extends StatelessWidget {
     flutterWebViewPlugin.evalJavascript(js);
     flutterWebViewPlugin.evalJavascript("document.getElementById('barcodenumberasset').dispatchEvent(new KeyboardEvent('keyup'))");
   }
+  openpopup(){
+    flutterWebViewPlugin.evalJavascript('eMessageThree()');
+  }
 
   void _upload(file) {
     if (file == null) {
       //String base64Image = base64Encode(file.readAsBytesSync());
       //String fileName = file.path.split("/").last;
-	    flutterWebViewPlugin.evalJavascript("document.getElementById('barcodenumberasset').value='0'");
+      flutterWebViewPlugin.evalJavascript("document.getElementById('barcodenumberasset').value=''");
       flutterWebViewPlugin.evalJavascript('eMessageTwo()');
 
     } else{
-      final String phpEndPoint = 'http://devl06.borugroup.com/mvadev/phoneapi/scanImage.php';
+      final String phpEndPoint = 'https://mva.borugroup.com/phoneapi/scanImage.php';
       String base64Image = base64Encode(file.readAsBytesSync());
       String fileName = file.path.split("/").last;
       flutterWebViewPlugin.evalJavascript("document.getElementById('barcodenumberasset').value= 'Fetching...'");
@@ -100,30 +117,33 @@ class MyApp extends StatelessWidget {
         "image": base64Image,
         "name": fileName,
       }).then((res) {
-	
+
         print(res.statusCode);
         String statusCode = res.body;
-        final jsonResponse = json.decode(res.body);
-
-        flutterWebViewPlugin.evalJavascript("document.getElementById('barcodenumberasset').value="+jsonResponse['message']);
-        flutterWebViewPlugin.evalJavascript("document.getElementById('barcodenumberasset').dispatchEvent(new KeyboardEvent('keyup'))");
+        var jsonResponse = json.decode(res.body);
+        var val = jsonResponse['message'];
         String message = jsonResponse['message'];
-         
-        print("Message is : " + message);
         if (message == "''"){
-          flutterWebViewPlugin.evalJavascript('console.log(eMessage())');
           flutterWebViewPlugin.evalJavascript('eMessage()');
-          print("hello again");
+        }else{
+          var js = "document.getElementById('barcodenumberasset').value=$val";
+          flutterWebViewPlugin.evalJavascript(js);
+          flutterWebViewPlugin.evalJavascript("document.getElementById('barcodenumberasset').dispatchEvent(new KeyboardEvent('keyup'))");
+
         }
+        //flutterWebViewPlugin.evalJavascript("document.getElementById('barcodenumberasset').value="+jsonResponse['message']);
+        // flutterWebViewPlugin.evalJavascript("document.getElementById('barcodenumberasset').dispatchEvent(new KeyboardEvent('keyup'))");
+
 
       }).catchError((err) {
         //print(err);
-        flutterWebViewPlugin.evalJavascript("document.getElementById('barcodenumberasset').value= Error: "+err);
-        flutterWebViewPlugin.evalJavascript('alert("Failed to parse image, please try again or enter asset number")');
+        //flutterWebViewPlugin.evalJavascript("document.getElementById('barcodenumberasset').value= Error: "+err);
+        flutterWebViewPlugin.evalJavascript('alert("Image Scanner Failed")');
       });
     }
 
   }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -383,6 +403,7 @@ class _MyAppState extends State<MyApps> {
   File _file;
   File _sample;
   File _lastCropped;
+  var _img;
 
   @override
   void dispose() {
@@ -454,8 +475,8 @@ class _MyAppState extends State<MyApps> {
     final file = await ImagePicker.pickImage(source: ImageSource.camera);
     final sample = await ImageCrop.sampleImage(
       file: file,
-      preferredWidth: 4096,
-      preferredHeight: 1024,
+      preferredWidth: 1024,
+      preferredHeight: 4096,
     );
 
     _sample?.delete();
@@ -467,9 +488,15 @@ class _MyAppState extends State<MyApps> {
     });  */
     this._sample = sample;
     this._file = file;
+    storedfile = file;
+    return file;
+
+  }
+  Future<File> _cropImage() async {
     final area = Rect.fromLTWH( 0.0, 0.0, 1.0, 1.0);
-    final img = await ImageCrop.cropImage(
-      file: this._file,
+
+     var img = await ImageCrop.cropImage(
+      file: storedfile,
       area: area,
     );
 
@@ -490,14 +517,11 @@ class _MyAppState extends State<MyApps> {
             lockAspectRatio: false),
         iosUiSettings: IOSUiSettings(
           //minimumAspectRatio: 1.0,
-		showCancelConfirmationDialog: true,
+          showCancelConfirmationDialog: true,
         )
     );
-
-    //_buildCroppingImage();
     return croppedFile;
-
-    // _cropImage(this._file);
-
   }
+
+
 }

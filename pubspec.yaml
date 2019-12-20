@@ -27,11 +27,7 @@ dependencies:
     path: './flutter_webview_plugin'
   flutter_barcode_scanner: ^0.1.7
   image_crop:
-<<<<<<< HEAD
-    #path: './image_crop'
-=======
     path: './image_crop'
->>>>>>> 806dec4939d2d030a2c1e64cde87486f5f4898e2
   image_picker:
   image_cropper: ^1.1.0
   image: ^2.1.9
